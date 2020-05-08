@@ -1,0 +1,47 @@
+From 56e2d6a3da210abe88bbd4f891aec50a4168a639 Mon Sep 17 00:00:00 2001
+From: Georges Basile Stavracas Neto <georges.stavracas@gmail.com>
+Date: Mon, 28 Dec 2020 14:27:29 -0300
+Subject: [PATCH] filter, stream: Fix error check for DMA-BUF buffers
+
+When a buffer is of type SPA_DATA_DmaBuf, the 'data' field
+will be NULL - we instead have to check if the file descriptor
+is valid. The current code, however, always checks if the
+data is NULL, which gives a false positive for DMA-BUF buffers,
+signaling an error when there is none.
+
+Fix that by also checking if the buffer type is MemPtr together
+with the NULL check of the 'data' field.
+---
+ src/pipewire/filter.c | 2 +-
+ src/pipewire/stream.c | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/src/pipewire/filter.c b/src/pipewire/filter.c
+index 281b1e83..7bacc7fb 100644
+--- a/src/pipewire/filter.c
++++ b/src/pipewire/filter.c
+@@ -684,7 +684,7 @@ static int impl_port_use_buffers(void *object,
+ 						return res;
+ 					SPA_FLAG_SET(b->flags, BUFFER_FLAG_MAPPED);
+ 				}
+-				else if (d->data == NULL) {
++				else if (d->type == SPA_DATA_MemPtr && d->data == NULL) {
+ 					pw_log_error(NAME" %p: invalid buffer mem", filter);
+ 					return -EINVAL;
+ 				}
+diff --git a/src/pipewire/stream.c b/src/pipewire/stream.c
+index 5da8dc76..cb87996b 100644
+--- a/src/pipewire/stream.c
++++ b/src/pipewire/stream.c
+@@ -687,7 +687,7 @@ static int impl_port_use_buffers(void *object,
+ 						return res;
+ 					SPA_FLAG_SET(b->flags, BUFFER_FLAG_MAPPED);
+ 				}
+-				else if (d->data == NULL) {
++				else if (d->type == SPA_DATA_MemPtr && d->data == NULL) {
+ 					pw_log_error(NAME" %p: invalid buffer mem", stream);
+ 					return -EINVAL;
+ 				}
+-- 
+2.29.2
+

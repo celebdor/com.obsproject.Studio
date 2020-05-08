@@ -12,6 +12,7 @@
     "--share=network",
     "--share=ipc",
     "--filesystem=xdg-run/obs-xdg-portal:create",
+    "--filesystem=xdg-run/pipewire-0",
     "--filesystem=host",
     "--talk-name=org.kde.StatusNotifierWatcher",
     "--talk-name=org.freedesktop.ScreenSaver",
@@ -222,6 +223,46 @@
           "url": "https://github.com/ARMmbed/mbedtls.git",
           "commit": "848a4e06b375e067552f1a21d4bc69322c673217",
           "tag": "mbedtls-2.16.8"
+        }
+      ]
+    },
+    {
+      "name": "jack2",
+      "buildsystem": "simple",
+      "build-commands": [
+        "./waf configure --prefix=$FLATPAK_DEST",
+        "./waf build -j $FLATPAK_BUILDER_N_JOBS",
+        "./waf install"
+      ],
+      "cleanup": [
+        "*"
+      ],
+      "sources": [
+        {
+          "type": "archive",
+          "url": "https://github.com/jackaudio/jack2/releases/download/v1.9.14/v1.9.14.tar.gz",
+          "sha256": "a20a32366780c0061fd58fbb5f09e514ea9b7ce6e53b080a44b11a558a83217c"
+        }
+      ]
+    },
+    {
+      "name": "pipewire",
+      "buildsystem": "meson",
+      "config-opts": [
+        "-Dalsa=false",
+        "-Dbluez5=false",
+        "-Dexamples=false",
+        "-Dman=false",
+        "-Dtests=false"
+      ],
+      "sources": [
+        {
+          "type": "git",
+          "url": "https://gitlab.freedesktop.org/pipewire/pipewire.git"
+        },
+        {
+          "type": "patch",
+          "path": "patches/pipewire-fix-error-check-for-DMA-BUF-buffers.patch"
         }
       ]
     },
