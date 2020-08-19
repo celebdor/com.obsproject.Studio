@@ -6,7 +6,7 @@
   "sdk": "org.kde.Sdk",
   "command": "obs",
   "finish-args": [
-    "--socket=x11",
+    "--socket=fallback-x11",
     "--socket=pulseaudio",
     "--device=all",
     "--share=network",
@@ -277,6 +277,7 @@
         "-DDISABLE_ALSA=ON",
         "-DENABLE_PULSEAUDIO=ON",
         "-DWITH_RTMPS=ON",
+        "-DENABLE_WAYLAND=ON",
         "-DOBS_VERSION_OVERRIDE=26.1.0"
       ],
       "post-install": [
@@ -289,9 +290,8 @@
       "sources": [
         {
           "type": "git",
-          "url": "https://github.com/obsproject/obs-studio.git",
-          "tag": "26.1.0",
-          "commit": "38ad3ba18fc27846e122bd56f589ccb34c4578e2"
+          "url": "https://github.com/GeorgesStavracas/obs-studio.git",
+          "tag": "26.1.0-dmabuf"
         }
       ]
     },
@@ -301,9 +301,8 @@
       "config-opts": ["--buildtype=release"],
       "sources": [
         {
-          "type": "archive",
-          "url": "https://gitlab.gnome.org/feaneron/obs-xdg-portal/-/archive/0.1.2/obs-xdg-portal-0.1.2.tar.gz",
-          "sha256": "ef0c72680a58e8bf30c6bbc6c3daf163031c6dfc2b0c01a3b2b26fc995db145e"
+          "type": "git",
+          "url": "https://gitlab.gnome.org/feaneron/obs-xdg-portal.git"
         }
       ]
     }
